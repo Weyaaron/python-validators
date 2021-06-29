@@ -1,48 +1,10 @@
-def decorator_do_it_twice(func):
-    def run_twice(*args):
-        return func(func(*args))
+from typeguard import typechecked
 
-    return run_twice
+from src.post_execution.post_validators import post_validate_result_in_bounds
 
 
-def decocator_detect_output(func):
-    def raise_error(*args):
-        result = func(*args)
-        if result > 2:
-            raise ValueError
-        return result
-    return raise_error
-
-
-def decorator_detect_input(func):
-    def raise_error(*args):
-        if args[0] >= args[1]:
-            raise AssertionError()
-        return func(*args)
-
-    return raise_error
-
-
-@decorator_do_it_twice
-def add_one(number: int) -> int:
-    return number + 1
-
-
-def decorator_with_arg(*name, **kw):
-
-
-    range = kw.get("is_in_range", [])
-    print(f"Has been called with{name}")
-    def inner_func(func):
-        return func
-
-    return inner_func
-
-
-
-@decorator_detect_input
-@decocator_detect_output
-@decorator_with_arg(is_in_range="Input")
+@post_validate_result_in_bounds(min=0, max=100)
+#@typechecked
 def add_one_up_until(input: int, max: int) -> int:
     if input < max:
         return input + 1
@@ -50,7 +12,6 @@ def add_one_up_until(input: int, max: int) -> int:
 
 
 if __name__ == '__main__':
-    print(add_one(6))
     for i in range(0, 10):
         print(add_one_up_until(i, 5))
 
